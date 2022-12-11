@@ -282,6 +282,108 @@ $app->post('/EditLesson',function(Request $request , Response $response ){
 });
 
 
+$app->post('/addNewSubscription', function (Request $request, Response $response) {
+    $user_id = $request->getParam('userID');
+    $course_id = $request->getParam('courseID');
+
+    $sql = "INSERT INTO subscriptions (userID, courseID) VALUES (:user_id, :course_id)";
+
+    try {
+        $db = new DataBase();
+        $connection = $db->connect();
+
+        $stmt = $connection->prepare($sql);
+        $stmt->bindParam(':user_id',$user_id);
+        $stmt->bindParam(':course_id',$course_id);
+        $result = $stmt->execute();
+
+        $result=array(
+            "rows"=>$result,
+        );
+
+        $response->getBody()->write(json_encode($result));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(200);
+    } catch (PDOException $e) {
+        $error = array(
+            "message"=>$e->getMessage()
+        );
+        $response->getBody()->write(json_encode($error));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(500);
+    }
+});
+
+$app->delete('/deleteASubscription', function (Request $request, Response $response, array $args) {
+    $user_id = $request->getParam('userID');
+    $course_id = $request->getParam('courseID');
+
+    $sql = "DELETE FROM subscriptions WHERE course_id = $course_id AND user_id = $user_id";
+
+    try {
+        $db = new DataBase();
+        $connection = $db->connect();
+
+        $stmt = $connection->prepare($sql);
+        $result = $stmt->execute();
+
+        $db=null;
+
+        $result=array(
+            "status"=>"ok",
+        );
+
+        $response->getBody()->write(json_encode($result));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(200);
+    } catch (PDOException $e) {
+        $error = array(
+            "message"=>$e->getMessage()
+        );
+        $response->getBody()->write(json_encode($error));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(500);
+    }
+});
+
+$app->post('/updateProgress', function(Request $request, Response $response) {
+    $user_id = $request->getParam('userID');
+    $course_id = $request->getParam('courseID');
+    $lesson_id = $request->getParam('lessonId');
+
+    $sql1 = "UPDATE subscriptions SET lesson_id = '$lesson_id' WHERE user_id = $user_id and course_id = $course_id";
+
+
+    try{
+        $db = new DataBase();
+        $connection = $db->connect();
+
+        $stmt = $connection->query($sql1);
+        $test = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        $result=array(
+            "status" => "ok",
+        );
+
+        $response->getBody()->write(json_encode($result));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(200);
+    } catch(PDOException $e){
+        $error = array(
+            "message"=>$e->getMessage()
+        );
+
+        $response->getBody()->write(json_encode($error));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(500);
+    }
+});
 
 
 
