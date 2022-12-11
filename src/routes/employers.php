@@ -285,8 +285,9 @@ $app->post('/EditLesson',function(Request $request , Response $response ){
 $app->post('/addNewSubscription', function (Request $request, Response $response) {
     $user_id = $request->getParam('userID');
     $course_id = $request->getParam('courseID');
+    $active = true;
 
-    $sql = "INSERT INTO subscriptions (userID, courseID) VALUES (:user_id, :course_id)";
+    $sql = "INSERT INTO subscriptions (user_id, course_id, active) VALUES (:user_id, :course_id, :active)";
 
     try {
         $db = new DataBase();
@@ -295,6 +296,7 @@ $app->post('/addNewSubscription', function (Request $request, Response $response
         $stmt = $connection->prepare($sql);
         $stmt->bindParam(':user_id',$user_id);
         $stmt->bindParam(':course_id',$course_id);
+        $stmt->bindParam(':active',$active);
         $result = $stmt->execute();
 
         $result=array(
@@ -350,19 +352,20 @@ $app->delete('/deleteASubscription', function (Request $request, Response $respo
     }
 });
 
-$app->post('/updateProgress', function(Request $request, Response $response) {
+$app->post('/UpdateProgress', function(Request $request, Response $response) {
     $user_id = $request->getParam('userID');
     $course_id = $request->getParam('courseID');
-    $lesson_id = $request->getParam('lessonId');
+    $lesson_id = $request->getParam('lessonID');
 
-    $sql1 = "UPDATE subscriptions SET lesson_id = '$lesson_id' WHERE user_id = $user_id and course_id = $course_id";
+    $sql = "UPDATE subscriptions SET progress = $lesson_id WHERE user_id = $user_id and course_id = $course_id";
 
 
     try{
         $db = new DataBase();
         $connection = $db->connect();
 
-        $stmt = $connection->query($sql1);
+        $stmt = $connection->prepare($sql);
+        $result = $stmt->execute();
         $test = $stmt->fetchAll(PDO::FETCH_OBJ);
 
         $result=array(
