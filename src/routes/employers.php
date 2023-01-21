@@ -466,9 +466,8 @@ $app->post('/addNewSubscription', function (Request $request, Response $response
 $app->delete('/deleteASubscription', function (Request $request, Response $response, array $args) {
     $user_id = $request->getParam('userID');
     $course_id = $request->getParam('courseID');
-    $active = false;
 
-    $sql = "UPDATE subscriptions SET active = '$active' WHERE course_id = $course_id and user_id = $user_id";
+    $sql = "DELETE FROM subscriptions WHERE course_id = $course_id AND user_id = $user_id";
 
     try {
         $db = new DataBase();
