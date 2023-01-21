@@ -165,6 +165,151 @@ $app->post('/validation_username',function(Request $request , Response $response
 
 });
 
+$app->post('/AddCourse',function(Request $request , Response $response ){
+    
+    $userID = $request->getParam('userID');
+    $course_name = $request->getParam('course_name');
+    $course_description = $request->getParam('course_description');
+
+    $sql1 = "INSERT INTO `courses`( `user_id`, `course_name`, `course_description`) values( :userID, :course_name, :course_description) ";
+    try{
+        $db = new DataBase();
+        $connection = $db->connect();
+        
+        $stmt = $connection->prepare($sql1);
+
+        $stmt->bindParam(':userID',$userID);
+        $stmt->bindParam(':course_name',$course_name);
+        $stmt->bindParam(':course_description',$course_description);
+
+        $result1 = $stmt->execute();
+
+        $result=array(
+            "status"=>"ok",
+            "rows"=>$result1
+        );
+
+        $response->getBody()->write(json_encode($result));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(200);
+    }
+    catch(PDOException $e){
+        $error = array(
+            "message"=>$e->getMessage()
+        );
+        $response->getBody()->write(json_encode($error));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(500);
+    }
+
+});
+
+
+$app->post('/DeleteCourse',function(Request $request , Response $response ){
+    
+    $userID = $request->getParam('userID');
+    $courseID = $request->getParam('courseID');
+
+    $sql1 = "DELETE FROM courses WHERE course_id= $courseID and user_id = $userID ";
+    try{
+        $db = new DataBase();
+        $connection = $db->connect();
+
+        $stmt = $connection->prepare($sql1);
+        $result1 = $stmt->execute();
+
+        $result=array(
+            "status"=>"ok",
+            "rows"=>$result1
+        );
+
+        $response->getBody()->write(json_encode($result));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(200);
+    }
+    catch(PDOException $e){
+        $error = array(
+            "message"=>$e->getMessage()
+        );
+        $response->getBody()->write(json_encode($error));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(500);
+    }
+
+});
+
+
+$app->post('/AddLesson',function(Request $request , Response $response ){
+    
+    $userID = $request->getParam('userID');
+    $courseID = $request->getParam('courseID');
+    $name = $request->getParam('name');
+    $data = $request->getParam('data');
+    $description = $request->getParam('description');
+
+    $result1 = 0;
+
+    $sql1 = "SELECT count(*) FROM courses WHERE user_id = '$userID' and course_id = '$courseID' ";
+    try{
+        $db = new DataBase();
+        $connection = $db->connect();
+
+        $stmt = $connection->prepare($sql1);
+        $result1 = $stmt->execute();
+    }
+    catch(PDOException $e){
+        $error = array(
+            "message"=>$e->getMessage()
+        );
+        $response->getBody()->write(json_encode($error));
+        return $response
+            ->withHeader('content-type','application/json')
+            ->withStatus(500);
+    }
+    if ($result1 != 0)
+    {
+        $sql2 = "INSERT INTO course_content(course_id, location, public_name, lesson_description) values (:userID, :data, :name, :descritpion)";
+        try
+        {
+            $db = new DataBase();
+            $connection = $db->connect();
+
+            $stmt = $connection->prepare($sql2);
+            $stmt->bindParam(':userID',$userID);
+            $stmt->bindParam(':data',$data);
+            $stmt->bindParam(':name',$name);
+            $stmt->bindParam(':descritpion',$description);
+            $result2 = $stmt->execute();
+
+            
+            $result=array(
+                "status"=>"ok",
+                "rows"=>$result2
+            );
+
+            $response->getBody()->write(json_encode($result));
+            return $response
+                ->withHeader('content-type','application/json')
+                ->withStatus(200);
+
+        }
+            catch(PDOException $e){
+            $error = array(
+                "message"=>$e->getMessage()
+            );
+        
+            $response->getBody()->write(json_encode($error));
+            return $response
+                ->withHeader('content-type','application/json')
+                ->withStatus(500);
+    }
+    }
+});
+
 
 
 $app->delete ('/DeleteLesson',function(Request $request , Response $response , array $args){
