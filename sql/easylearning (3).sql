@@ -72,7 +72,8 @@ CREATE TABLE `subscriptions` (
   `progress` int(11) NOT NULL,
   `active` tinyint(1) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
-  `course_id` int(11) DEFAULT NULL
+  `course_id` int(11) DEFAULT NULL,
+   CONSTRAINT user_course UNIQUE (user_id,course_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
