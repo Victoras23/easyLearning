@@ -127,7 +127,6 @@ $app->post('/register',function(Request $request , Response $response ){
     }
 });
 
-
 $app->post('/validation_username',function(Request $request , Response $response ){
     
     $username = $request->getParam('user_name');
@@ -206,7 +205,6 @@ $app->post('/AddCourse',function(Request $request , Response $response ){
 
 });
 
-
 $app->post('/DeleteCourse',function(Request $request , Response $response ){
 
     $userID = $request->getParam('userID');
@@ -241,7 +239,6 @@ $app->post('/DeleteCourse',function(Request $request , Response $response ){
     }
 
 });
-
 
 $app->post('/AddLesson',function(Request $request , Response $response ){
 
@@ -310,8 +307,6 @@ $app->post('/AddLesson',function(Request $request , Response $response ){
     }
 });
 
-
-
 $app->delete ('/DeleteLesson',function(Request $request , Response $response , array $args){
     $course_id = $request->getParam('courseID');
     $lesson_id = $request->getParam('lessonID');  
@@ -346,7 +341,6 @@ $app->delete ('/DeleteLesson',function(Request $request , Response $response , a
             ->withStatus(500);
     }
 });
-
 
 $app->post('/EditCourse',function(Request $request , Response $response ){
     
@@ -386,7 +380,6 @@ $app->post('/EditCourse',function(Request $request , Response $response ){
 
 });
 
-
 $app->post('/EditLesson',function(Request $request , Response $response ){
 
     $course_id = $request->getParam('courseID');
@@ -425,7 +418,6 @@ $app->post('/EditLesson',function(Request $request , Response $response ){
     }
 
 });
-
 
 $app->post('/addNewSubscription', function (Request $request, Response $response) {
     $user_id = $request->getParam('userID');
